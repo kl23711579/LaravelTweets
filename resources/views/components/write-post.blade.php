@@ -1,5 +1,5 @@
 <div class="border border-black">
-    <form action="/newpost" method="POST" >
+    <form action="/posts" method="POST" >
         @csrf
         <div class="m-3">
             <textarea
