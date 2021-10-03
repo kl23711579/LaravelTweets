@@ -30,13 +30,12 @@ class SessionController extends Controller
     protected function _registerOrLoginTwitterUser($incomingUser)
     {
         $user = User::where('twitter_id', $incomingUser->id)->first();
-
         if (! $user) {
            $user = new User();
            $user->name = $incomingUser->name;
            $user->email = $incomingUser->email;
            $user->twitter_id = $incomingUser->id;
-           $user->password = encrypt('password');
+           $user->password = bcypt('password');
            $user->save();
         }
 
