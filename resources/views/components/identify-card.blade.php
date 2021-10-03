@@ -14,7 +14,7 @@
                     </h1>
 
                     <span class="mt-2 block text-gray-400">
-                        {{ '@' . auth()->user()->twitter_id }}
+                        {{ '@' . auth()->user()->nickname }}
                     </span>
                 </div>
             </header>

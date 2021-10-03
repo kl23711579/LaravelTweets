@@ -13,7 +13,7 @@
                             {{ $post->author->name }}
                         </h1>
                         <span class = "mx-3 mt-1 text-gray-400 text-lg">
-                            {{ '@' . $post->author->twitter_id }}
+                            {{ '@' . $post->author->nickname }}
                         </span>
                     </div>
 
