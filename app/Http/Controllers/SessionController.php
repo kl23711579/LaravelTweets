@@ -42,4 +42,9 @@ class SessionController extends Controller
 
         auth()->login($user);
     }
+
+    public function destroy()
+    {
+        auth()->logout();
+    }
 }

@@ -16,9 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [PostController::class, 'index'])->name('home');
+Route::get('/', [PostController::class, 'index'])->middleware('auth')->name('home');
 
-Route::get('/login', [SessionController::class, 'create'])->middleware('guest');
+Route::get('login', [SessionController::class, 'create'])->middleware('guest')->name('login');
 
-Route::get('/auth/twitter', [SessionController::class, 'twitterRedirect'])->name('login.twitter');
+Route::get('/auth/twitter', [SessionController::class, 'twitterRedirect'])->middleware('guest')->name('login.twitter');
 Route::get('/auth/twitter/callback', [SessionController::class, 'twitterCallback']);
+Route::post('logout', [SessionController::class, 'destroy'])->middleware('auth');

@@ -12,9 +12,11 @@
             <div class="mt-8 md:mt-0">
 
                 @auth
-                    <a href="#" class="bg-blue-500 ml-3 rounded-full text-xs font-semibold text-white uppercase py-3 px-5">
-                        Logout
-                    </a>
+                    <form method="POST" action="/logout" class="ml-6">
+                        @csrf
+
+                        <button type="submit" class="bg-blue-500 ml-3 rounded-full text-xs font-semibold text-white uppercase py-3 px-5">Logout</button>
+                    </form>
                 @endauth
             </div>
         </nav>
