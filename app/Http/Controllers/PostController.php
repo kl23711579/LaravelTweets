@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -12,5 +13,20 @@ class PostController extends Controller
         return view('posts.index', [
             'posts' => Post::latest('published_at')->paginate(6)->withQueryString()
         ]);
+    }
+
+    public function store(Post $post)
+    {
+        request()->validate([
+            'body' => 'required'
+        ]);
+
+        $post = new Post();
+        $post->user_id = auth()->user()->id;
+        $post->body = request('body');
+        $post->published_at = Carbon::now();
+        $post->save();
+
+        return back();
     }
 }

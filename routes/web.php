@@ -23,3 +23,5 @@ Route::get('login', [SessionController::class, 'create'])->middleware('guest')->
 Route::get('/auth/twitter', [SessionController::class, 'twitterRedirect'])->middleware('guest')->name('login.twitter');
 Route::get('/auth/twitter/callback', [SessionController::class, 'twitterCallback']);
 Route::post('logout', [SessionController::class, 'destroy'])->middleware('auth');
+
+Route::Post('newpost', [PostController::class, 'store'])->middleware('auth');
