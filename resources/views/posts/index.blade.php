@@ -12,5 +12,8 @@
 
             </div>
         </div>
+        @if ($posts->count())
+            {{ $posts->links() }}
+        @endif
     </main>
 </x-layout>

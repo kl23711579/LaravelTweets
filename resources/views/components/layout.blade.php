@@ -11,9 +11,11 @@
         <nav class="md:flex md:items-center justify-end">
             <div class="mt-8 md:mt-0">
 
-                <a href="#" class="bg-blue-500 ml-3 rounded-full text-xs font-semibold text-white uppercase py-3 px-5">
-                    Logout
-                </a>
+                @auth
+                    <a href="#" class="bg-blue-500 ml-3 rounded-full text-xs font-semibold text-white uppercase py-3 px-5">
+                        Logout
+                    </a>
+                @endauth
             </div>
         </nav>
 

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\SessionController;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
@@ -14,8 +16,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('posts.index', [
-        'posts' => Post::latest('published_at')->get()
-    ]);
-});
+Route::get('/', [PostController::class, 'index'])->name('home');
+
+Route::get('/login', [SessionController::class, 'create'])->middleware('guest');
+
+Route::get('/auth/twitter', [SessionController::class, 'twitterRedirect'])->name('login.twitter');
+Route::get('/auth/twitter/callback', [SessionController::class, 'twitterCallback']);
