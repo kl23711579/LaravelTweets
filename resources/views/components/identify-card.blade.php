@@ -10,12 +10,12 @@
 
                 <div class="mt-4">
                     <h1 class="text-3xl">
-                        Frank Tsai
+                        {{ auth()->user()->name }}
                     </h1>
 
                     <span class="mt-2 block text-gray-400">
-                                        @frank
-                                    </span>
+                        {{ '@' . auth()->user()->twitter_id }}
+                    </span>
                 </div>
             </header>
 
