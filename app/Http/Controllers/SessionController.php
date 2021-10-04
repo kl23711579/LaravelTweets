@@ -9,7 +9,7 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SessionController extends Controller
 {
-    protected $repository;
+    protected SessionRepository $repository;
 
     public function __construct(SessionRepository $repository)
     {

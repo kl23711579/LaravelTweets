@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Criteria\TimelineCriteriaCriteria;
 use App\Models\Post;
 use App\Models\UserFollower;
 use App\Repositories\PostRepository;
@@ -10,7 +11,7 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    protected $repository;
+    protected PostRepository $repository;
 
     public function __construct(PostRepository $repository)
     {
@@ -19,12 +20,11 @@ class PostController extends Controller
 
     public function index()
     {
-        $following = auth()->user()->follows()->pluck('user_id')->toArray();
-        array_push($following, auth()->user()->id);
+        $following = auth()->user()->follows()->pluck('user_id');
 
-        $posts = $this->repository->scopeQuery(function($query) use ($following) {
-            return $query->whereIn('user_id', $following)->latest('published_at');
-        })->paginate(6);
+        $this->repository->pushCriteria(new TimelineCriteriaCriteria($following));
+
+        $posts = $this->repository->paginate(6);
 
         return view('posts.index', [
             'posts' => $posts,
