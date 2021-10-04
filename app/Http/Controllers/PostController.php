@@ -4,11 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\UserFollower;
+use App\Repositories\PostRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    protected $repository;
+
+    public function __construct(PostRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function index()
     {
         $following_ids_db = UserFollower::where('follower_id', auth()->user()->id)->get('user_id');
