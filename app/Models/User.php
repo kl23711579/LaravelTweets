@@ -44,11 +44,28 @@ class User extends Authenticatable
 
     public function followers()
     {
-        return $this->hasMany(UserFollower::class);
+        return $this->belongsToMany(User::class, 'user_followers', 'user_id', 'follower_id');
     }
 
     public function followings()
     {
-        return $this->hasMany(UserFollower::class, 'follower_id');
+        return $this->belongsToMany(User::class, 'user_followers', 'follower_id');
+    }
+
+    public function follower_posts()
+    {
+        return $this->hasManyThrough(Post::class, UserFollower::class, 'user_id', 'user_id', 'id', 'follower_id');
+    }
+
+    public function following_posts()
+    {
+        // users,id = user_followers.id
+        // user_followers.id = posts.user_id
+        return $this->hasManyThrough(Post::class, UserFollower::class, 'follower_id', 'user_id', 'id', 'user_id');
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
     }
 }

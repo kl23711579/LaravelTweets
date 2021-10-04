@@ -34,8 +34,9 @@ class SessionController extends Controller
            $user = new User();
            $user->name = $incomingUser->name;
            $user->email = $incomingUser->email;
+           $user->nickname = $incomingUser->nickname;
            $user->twitter_id = $incomingUser->id;
-           $user->password = bcypt('password');
+           $user->password = bcrypt('password');
            $user->save();
         }
 
