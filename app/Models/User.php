@@ -52,6 +52,11 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'user_followers', 'follower_id');
     }
 
+    public function follows()
+    {
+        return $this->hasMany(UserFollower::class, 'follower_id');
+    }
+
     public function follower_posts()
     {
         return $this->hasManyThrough(Post::class, UserFollower::class, 'user_id', 'user_id', 'id', 'follower_id');
@@ -67,5 +72,16 @@ class User extends Authenticatable
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    public function timeline()
+    {
+        $following = $this->follows()->pluck('user_id');
+
+        return Post::whereIn('user_id', $following)
+            ->orWhere('user_id', $this->id)
+            ->latest('published_at')
+            ->paginate(6)
+            ->withQueryString();
     }
 }
