@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [SessionController::class, 'create'])->middleware('guest')->name('login');
+Route::post('/', [SessionController::class, 'store'])->middleware('guest');
 
 Route::get('/auth/twitter', [SessionController::class, 'twitterRedirect'])->middleware('guest')->name('login.twitter');
 Route::get('/auth/twitter/callback', [SessionController::class, 'twitterCallback']);
