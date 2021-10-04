@@ -3,11 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Repositories\SessionRepository;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 
 class SessionController extends Controller
 {
+    protected $repository;
+
+    public function __construct(SessionRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function create()
     {
         return view('sessions.create');
@@ -29,16 +37,13 @@ class SessionController extends Controller
 
     protected function _registerOrLoginTwitterUser($incomingUser)
     {
-        $user = User::where('twitter_id', $incomingUser->id)->first();
-        if (! $user) {
-           $user = new User();
-           $user->name = $incomingUser->name;
-           $user->email = $incomingUser->email;
-           $user->nickname = $incomingUser->nickname;
-           $user->twitter_id = $incomingUser->id;
-           $user->password = bcrypt('password');
-           $user->save();
-        }
+        $user = $this->repository->updateOrCreate(['twitter_id' => $incomingUser->id],[
+            'name' => $incomingUser->name,
+            'email' => $incomingUser->email,
+            'nickname' => $incomingUser->nickname,
+            'twitter_id' => $incomingUser->id,
+            'password' => bcrypt('password'),
+        ]);
 
         auth()->login($user);
     }
