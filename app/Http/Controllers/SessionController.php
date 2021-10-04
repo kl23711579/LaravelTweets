@@ -32,7 +32,7 @@ class SessionController extends Controller
 
         $this->_registerOrLoginTwitterUser($user);
 
-        return redirect('/');
+        return redirect('/posts');
     }
 
     protected function _registerOrLoginTwitterUser($incomingUser)
@@ -52,6 +52,6 @@ class SessionController extends Controller
     {
         auth()->logout();
 
-        return redirect('login');
+        return redirect('/');
     }
 }

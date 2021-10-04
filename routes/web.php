@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SessionController;
-use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,12 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [PostController::class, 'index'])->middleware('auth')->name('home');
-
-Route::get('login', [SessionController::class, 'create'])->middleware('guest')->name('login');
+Route::get('/', [SessionController::class, 'create'])->middleware('guest')->name('login');
 
 Route::get('/auth/twitter', [SessionController::class, 'twitterRedirect'])->middleware('guest')->name('login.twitter');
 Route::get('/auth/twitter/callback', [SessionController::class, 'twitterCallback']);
 Route::post('logout', [SessionController::class, 'destroy'])->middleware('auth');
 
+Route::get('posts', [PostController::class, 'index'])->middleware('auth')->name('home');
 Route::Post('posts', [PostController::class, 'store'])->middleware('auth');
