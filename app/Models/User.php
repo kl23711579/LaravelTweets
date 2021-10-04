@@ -73,15 +73,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
-
-    public function timeline()
-    {
-        $following = $this->follows()->pluck('user_id');
-
-        return Post::whereIn('user_id', $following)
-            ->orWhere('user_id', $this->id)
-            ->latest('published_at')
-            ->paginate(6)
-            ->withQueryString();
-    }
 }

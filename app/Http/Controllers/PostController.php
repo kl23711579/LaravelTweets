@@ -19,8 +19,15 @@ class PostController extends Controller
 
     public function index()
     {
+        $following = auth()->user()->follows()->pluck('user_id')->toArray();
+        array_push($following, auth()->user()->id);
+
+        $posts = $this->repository->scopeQuery(function($query) use ($following) {
+            return $query->whereIn('user_id', $following)->latest('published_at');
+        })->paginate(6);
+
         return view('posts.index', [
-            'posts' => auth()->user()->timeline(),
+            'posts' => $posts,
         ]);
     }
 
@@ -30,11 +37,11 @@ class PostController extends Controller
             'body' => 'required'
         ]);
 
-        $post = new Post();
-        $post->user_id = auth()->user()->id;
-        $post->body = request('body');
-        $post->published_at = Carbon::now();
-        $post->save();
+        $this->repository->create([
+            'user_id' => auth()->user()->id,
+            'body' => request('body'),
+            'published_at' => Carbon::now(),
+        ]);
 
         return back();
     }
