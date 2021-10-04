@@ -18,7 +18,10 @@ class MockData extends Seeder
     public function run(Faker $faker)
     {
         $users = User::all();
-        $users->map(fn($user) => Post::factory(5)->create(['user_id' => $user->id]));
+
+        $users->map(function ($user) {
+            Post::factory(5)->create(['user_id' => $user->id]);
+        });
 
         $users->map(function($user) use ($users) {
             foreach($users as $u) {
