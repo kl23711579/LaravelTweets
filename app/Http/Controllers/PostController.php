@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\UserFollower;
 use App\Repositories\PostRepository;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -31,9 +32,9 @@ class PostController extends Controller
         ]);
     }
 
-    public function store(Post $post)
+    public function store()
     {
-        request()->validate([
+        $attributes = request()->validate([
             'body' => 'required'
         ]);
 
@@ -44,5 +45,21 @@ class PostController extends Controller
         ]);
 
         return back(302, [], '/posts');
+    }
+
+    public function show($id)
+    {
+        $result = $this->repository->findWhere([
+            'user_id' => auth()->user()->id,
+            'id' => $id
+        ])->first();
+
+        if(is_null($result)) {
+            throw new ModelNotFoundException();
+        }
+
+        return view('posts.show', [
+            'post' => $result
+        ]);
     }
 }

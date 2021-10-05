@@ -2,7 +2,7 @@
     class="col-span-2">
     <div class="px-5">
         <div>
-            <img src="./images/illustration-1.png" alt="Blog Post illustration" class="rounded-xl">
+            <img src="/images/illustration-1.png" alt="Blog Post illustration" class="rounded-xl">
         </div>
 
         <div class="mt-8 flex flex-col ">

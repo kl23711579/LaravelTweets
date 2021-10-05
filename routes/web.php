@@ -24,3 +24,6 @@ Route::post('logout', [SessionController::class, 'destroy'])->middleware('auth')
 
 Route::get('posts', [PostController::class, 'index'])->middleware('auth')->name('home');
 Route::Post('posts', [PostController::class, 'store'])->middleware('auth');
+Route::get('posts/{id}', [PostController::class, 'show'])->middleware('auth');
+
+//Route::get('posts/{post}')
