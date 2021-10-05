@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Criteria\TimelineCriteriaCriteria;
-use App\Repositories\ReplyRepository;
+use App\Repositories\PostRepository;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PostController extends Controller
 {
-    protected ReplyRepository $postRepository;
+    protected PostRepository $postRepository;
     protected UserRepository $userRepository;
 
-    public function __construct(ReplyRepository $postRepository, UserRepository $userRepository)
+    public function __construct(PostRepository $postRepository, UserRepository $userRepository)
     {
         $this->postRepository = $postRepository;
         $this->userRepository = $userRepository;
