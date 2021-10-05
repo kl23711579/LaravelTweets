@@ -49,8 +49,11 @@ class PostController extends Controller
 
     public function show($id)
     {
+        $following = auth()->user()->follows()->pluck('user_id')->all();
+        $following[] += auth()->user()->id;
+
         $result = $this->repository->findWhere([
-            'user_id' => auth()->user()->id,
+            ['user_id', 'IN', $following],
             'id' => $id
         ])->first();
 
