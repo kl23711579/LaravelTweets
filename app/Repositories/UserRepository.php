@@ -11,5 +11,21 @@ class UserRepository extends BaseRepository {
         // TODO: Implement model() method.
         return "App\\Models\\User";
     }
+
+    /**
+    * Get following users by id
+    *
+    * @param       $id
+    *
+    * @return mixed
+    */
+    public function getFollowingUsers($id)
+    {
+        $followingUsers = $this->model
+                                ->find($id)
+                                ->follows();
+
+        return $followingUsers;
+    }
 }
 

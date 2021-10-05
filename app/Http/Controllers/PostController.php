@@ -21,7 +21,10 @@ class PostController extends Controller
 
     public function index()
     {
-        $following = $this->getFollowing()->follows()->pluck('user_id')->all();
+        $following = $this->userRepository
+            ->getFollowingUsers(auth()->user()->id)
+            ->pluck('user_id')
+            ->all();
 
         $this->postRepository->pushCriteria(new TimelineCriteriaCriteria($following));
 
@@ -49,7 +52,10 @@ class PostController extends Controller
 
     public function show($id)
     {
-        $following = $this->getFollowing()->follows()->pluck('user_id')->all();
+        $following = $this->userRepository
+            ->getFollowingUsers(auth()->user()->id)
+            ->pluck('user_id')
+            ->all();
         $following[] += auth()->user()->id;
 
         $result = $this->postRepository->findWhere([
@@ -64,9 +70,5 @@ class PostController extends Controller
         return view('posts.show', [
             'post' => $result
         ]);
-    }
-    protected function getFollowing()
-    {
-        return $this->userRepository->find(auth()->user()->id);
     }
 }
