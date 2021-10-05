@@ -43,6 +43,6 @@ class PostController extends Controller
             'published_at' => Carbon::now(),
         ]);
 
-        return back();
+        return back(302, [], '/posts');
     }
 }
