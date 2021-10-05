@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Repositories\SessionRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Validation\ValidationException;
 
 class SessionController extends Controller
 {
-    protected SessionRepository $repository;
+    protected UserRepository $repository;
 
-    public function __construct(SessionRepository $repository)
+    public function __construct(UserRepository $repository)
     {
         $this->repository = $repository;
     }
