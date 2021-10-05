@@ -6,6 +6,7 @@ use App\Criteria\TimelineCriteriaCriteria;
 use App\Models\Post;
 use App\Models\UserFollower;
 use App\Repositories\PostRepository;
+use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -13,15 +14,17 @@ use Illuminate\Http\Request;
 class PostController extends Controller
 {
     protected PostRepository $postRepository;
+    protected UserRepository $userRepository;
 
-    public function __construct(PostRepository $repository)
+    public function __construct(PostRepository $postRepository, UserRepository $userRepository)
     {
-        $this->postRepository = $repository;
+        $this->postRepository = $postRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function index()
     {
-        $following = auth()->user()->follows()->pluck('user_id');
+        $following = $this->getFollowing()->follows()->pluck('user_id')->all();
 
         $this->postRepository->pushCriteria(new TimelineCriteriaCriteria($following));
 
@@ -49,7 +52,7 @@ class PostController extends Controller
 
     public function show($id)
     {
-        $following = auth()->user()->follows()->pluck('user_id')->all();
+        $following = $this->getFollowing()->follows()->pluck('user_id')->all();
         $following[] += auth()->user()->id;
 
         $result = $this->postRepository->findWhere([
@@ -64,5 +67,9 @@ class PostController extends Controller
         return view('posts.show', [
             'post' => $result
         ]);
+    }
+    protected function getFollowing()
+    {
+        return $this->userRepository->find(auth()->user()->id);
     }
 }
