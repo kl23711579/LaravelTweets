@@ -3,13 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Criteria\TimelineCriteriaCriteria;
-use App\Models\Post;
-use App\Models\UserFollower;
 use App\Repositories\PostRepository;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 
 class PostController extends Controller
 {

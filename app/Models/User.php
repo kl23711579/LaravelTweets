@@ -59,12 +59,12 @@ class User extends Authenticatable
         return $this->hasMany(UserFollower::class, 'follower_id');
     }
 
-    public function follower_posts()
+    public function followerPosts()
     {
         return $this->hasManyThrough(Post::class, UserFollower::class, 'user_id', 'user_id', 'id', 'follower_id');
     }
 
-    public function following_posts()
+    public function followingPosts()
     {
         // users,id = user_followers.id
         // user_followers.id = posts.user_id
