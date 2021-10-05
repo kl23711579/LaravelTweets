@@ -12,20 +12,20 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    protected PostRepository $repository;
+    protected PostRepository $postRepository;
 
     public function __construct(PostRepository $repository)
     {
-        $this->repository = $repository;
+        $this->postRepository = $repository;
     }
 
     public function index()
     {
         $following = auth()->user()->follows()->pluck('user_id');
 
-        $this->repository->pushCriteria(new TimelineCriteriaCriteria($following));
+        $this->postRepository->pushCriteria(new TimelineCriteriaCriteria($following));
 
-        $posts = $this->repository->paginate(6);
+        $posts = $this->postRepository->paginate(6);
 
         return view('posts.index', [
             'posts' => $posts,
@@ -38,7 +38,7 @@ class PostController extends Controller
             'body' => 'required'
         ]);
 
-        $this->repository->create([
+        $this->postRepository->create([
             'user_id' => auth()->user()->id,
             'body' => request('body'),
             'published_at' => Carbon::now(),
@@ -52,7 +52,7 @@ class PostController extends Controller
         $following = auth()->user()->follows()->pluck('user_id')->all();
         $following[] += auth()->user()->id;
 
-        $result = $this->repository->findWhere([
+        $result = $this->postRepository->findWhere([
             ['user_id', 'IN', $following],
             'id' => $id
         ])->first();
