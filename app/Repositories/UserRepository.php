@@ -23,7 +23,7 @@ class UserRepository extends BaseRepository {
     {
         $followingUsers = $this->model
                                 ->find($id)
-                                ->follows();
+                                ->followings();
 
         return $followingUsers;
     }
