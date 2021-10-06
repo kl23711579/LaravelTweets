@@ -8,7 +8,7 @@
                 <div class="border-l border-r border-black p-3">
                     <h1 class="ml-2 text-gray-500 text-base">Replys</h1>
                 </div>
-                <x-reply-tweet></x-reply-tweet>
+                <x-reply-tweet :post="$post"></x-reply-tweet>
             </div>
         </div>
     </main>

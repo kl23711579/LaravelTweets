@@ -1,5 +1,7 @@
+@props(['post'])
+
 <div class="pl-2 border border-black">
-    <form action="#" method="POST" >
+    <form action="{{'/posts/' . $post->id . '/replies'}}" method="POST" >
         @csrf
         <div class="m-3">
             <textarea

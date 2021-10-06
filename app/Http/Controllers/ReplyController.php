@@ -6,6 +6,7 @@ use App\Repositories\PostRepository;
 use App\Repositories\ReplyRepository;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class ReplyController extends Controller
@@ -31,19 +32,30 @@ class ReplyController extends Controller
             'body' =>'required'
         ]);
 
-        $reply = [
+        $following = $this->userRepository
+            ->getFollowingUsers(auth()->user()->id)
+            ->pluck('user_id')
+            ->all();
+        $following[] += auth()->user()->id;
+
+        $result = $this->postRepository->findWhere([
+            ['user_id', 'IN', $following],
+            'id' => $postId
+        ])->first();
+
+        if(is_null($result)) {
+            throw new ModelNotFoundException();
+        }
+
+        $this->replyRepository->create([
             'user_id' => auth()->user()->id,
             'post_id' => $postId,
             'body' => request('body'),
             'published_at' => Carbon::now(),
-        ];
+        ]);
 
-        //check is author
-        if($this->postRepository->find($postId)->user_id === auth()->user()->id){
-            $this->replyRepository->create($reply);
-        }
+        return redirect('/posts/'.$postId);
 
-        // check is following user
-        // get following user
+
     }
 }
