@@ -15,7 +15,7 @@ class CreateStarsTable extends Migration
     {
         Schema::create('stars', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('post_id')->constrained('post')->onDelete('cascade');
+            $table->foreignId('post_id')->constrained('posts')->onDelete('cascade');
             $table->integer('number')->default(0);
             $table->timestamps();
         });
