@@ -1,5 +1,4 @@
-<article
-    class="col-span-2">
+<article class="py-5 bg-white rounded-lg">
     <div class="px-5">
         <div>
             <img src="/images/illustration-1.png" alt="Blog Post illustration" class="rounded-xl">
