@@ -27,7 +27,6 @@ class ReplyFactory extends Factory
             'user_id' => $post->user_id,
             'post_id' => $post->id,
             'body' => $this->faker->paragraph(2),
-            'stars' => $this->faker->numberBetween(0, 1000),
             'published_at' => $this->faker->dateTimeBetween($post->published_at, 'now')
         ];
     }

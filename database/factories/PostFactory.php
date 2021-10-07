@@ -25,7 +25,6 @@ class PostFactory extends Factory
         return [
             'user_id' => User::factory(),
             'body' => $this->faker->paragraph(2),
-            'stars' => $this->faker->numberBetween(0, 1000),
             'published_at' => $this->faker->dateTimeBetween('-1 Month', 'now')
         ];
     }

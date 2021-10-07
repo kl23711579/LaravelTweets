@@ -34,6 +34,11 @@ class Post extends Model
         return $this->hasMany(Reply::class, 'post_id');
     }
 
+    public function star()
+    {
+        return $this->hasOne(Star::class, 'post_id');
+    }
+
     public function scopeTrending($query)
     {
         return $query->orderBy('stars', 'desc')->take(10);

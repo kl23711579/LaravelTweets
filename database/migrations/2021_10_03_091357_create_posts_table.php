@@ -17,7 +17,6 @@ class CreatePostsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->text('body');
-            $table->integer('stars')->default(0);
             $table->timestamps();
             $table->timestamp("published_at")->nullable();
         });
