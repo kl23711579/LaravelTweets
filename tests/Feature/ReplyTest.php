@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Post;
+use App\Models\Reply;
 use App\Models\User;
 use App\Models\UserFollower;
 use Database\Factories\ReplyFactory;
@@ -94,5 +95,81 @@ class ReplyTest extends TestCase
         ]);
 
         $reponse->assertStatus(404);
+    }
+
+    public function test_users_can_see_reply()
+    {
+        $user = User::factory()->create();
+
+        // create user posts
+        $post = Post::factory()->create(['user_id' => $user->id]);
+
+        // create reply
+        $reply = Reply::factory()->create([
+            'user_id' => $post->user_id,
+            'post_id' => $post->id,
+            'body' => $this->faker->paragraph(2)
+        ]);
+
+        $reponse = $this->actingAs($user)->get('/posts/' . $post->id);
+
+        $reponse->assertSee($reply->body);
+
+    }
+
+    public function test_users_can_see_their_reply_in_following_user_tweet()
+    {
+        $user = User::factory()->create();
+
+        // create user posts
+        Post::factory()->create(['user_id' => $user->id]);
+
+        // create following user
+        $followingUser = User::factory()->create();
+        // config relationship
+        $uf = new UserFollower;
+        $uf->user_id = $followingUser->id;
+        $uf->follower_id = $user->id;
+        $uf->save();
+
+        // create following user tweet
+        $post = Post::factory()->create(['user_id' => $followingUser->id]);
+
+        // create reply
+        $reply = Reply::factory()->create([
+            'user_id' => $post->user_id,
+            'post_id' => $post->id,
+            'body' => $this->faker->paragraph(2)
+        ]);
+
+        $reponse = $this->actingAs($user)->get('/posts/' . $post->id);
+
+        $reponse->assertSee($reply->body);
+
+    }
+
+    public function test_replies_are_arranged_in_the_order_of_new_to_old()
+    {
+        $user = User::factory()->create();
+
+        // create user posts
+        $post = Post::factory()->create(['user_id' => $user->id]);
+
+        // create reply
+        $reply1 = Reply::factory()->create([
+            'user_id' => $post->user_id,
+            'post_id' => $post->id,
+            'body' => $this->faker->paragraph(2)
+        ]);
+
+        $reply2 = Reply::factory()->create([
+            'user_id' => $post->user_id,
+            'post_id' => $post->id,
+            'body' => $this->faker->paragraph(2)
+        ]);
+
+        $reponse = $this->actingAs($user)->get('/posts/' . $post->id);
+
+        $reponse->assertSeeInOrder([$reply1->body, $reply2->body]);
     }
 }

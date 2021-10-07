@@ -29,6 +29,11 @@ class Post extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function reply()
+    {
+        return $this->hasMany(Reply::class, 'post_id');
+    }
+
     public function scopeTrending($query)
     {
         return $query->orderBy('stars', 'desc')->take(10);

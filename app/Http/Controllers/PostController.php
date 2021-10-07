@@ -58,7 +58,7 @@ class PostController extends Controller
             ->all();
         $following[] += auth()->user()->id;
 
-        $result = $this->postRepository->findWhere([
+        $result = $this->postRepository->with(['reply', 'author'])->findWhere([
             ['user_id', 'IN', $following],
             'id' => $id
         ])->first();

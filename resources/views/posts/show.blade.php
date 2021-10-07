@@ -8,6 +8,9 @@
                 <div class="border-l border-r border-black p-3">
                     <h1 class="ml-2 text-gray-500 text-base">Replys</h1>
                 </div>
+                @foreach($post->reply as $reply)
+                    <x-reply-card :reply="$reply"></x-reply-card>
+                @endforeach
                 <x-reply-tweet :post="$post"></x-reply-tweet>
             </div>
         </div>

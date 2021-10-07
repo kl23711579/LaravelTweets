@@ -19,7 +19,7 @@ class Reply extends Model
 
     protected $hidden = ['updated_at', 'created_at'];
 
-    protected $with = [];
+    protected $with = ['author'];
 
     protected $casts = [
         'published_at' => 'datetime',
@@ -27,11 +27,11 @@ class Reply extends Model
 
     public function author()
     {
-        $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function post()
     {
-        $this->belongsTo(Post::class);
+        return $this->belongsTo(Post::class);
     }
 }
