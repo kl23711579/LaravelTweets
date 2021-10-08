@@ -32,6 +32,6 @@ class Reply extends Model
 
     public function post()
     {
-        return $this->belongsTo(Post::class);
+        return $this->belongsTo(Post::class)->latest('published_at');
     }
 }

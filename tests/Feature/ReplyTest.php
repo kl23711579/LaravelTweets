@@ -24,8 +24,6 @@ class ReplyTest extends TestCase
 
         // post reply
         $reponse = $this->actingAs($user)->post('/posts/'.$post->id.'/replies', [
-            'user_id' => $post->user_id,
-            'post_id' => $post->id,
             'body' => $this->faker->paragraph(2)
         ]);
 
@@ -52,8 +50,6 @@ class ReplyTest extends TestCase
 
         // post reply
         $reponse = $this->actingAs($user)->post('/posts/'.$post->id.'/replies', [
-            'user_id' => $post->user_id,
-            'post_id' => $post->id,
             'body' => $this->faker->paragraph(2)
         ]);
 
@@ -75,8 +71,6 @@ class ReplyTest extends TestCase
 
         // post reply
         $reponse = $this->actingAs($user)->post('/posts/'.$post->id.'/replies', [
-            'user_id' => $post->user_id,
-            'post_id' => $post->id,
             'body' => $this->faker->paragraph(2)
         ]);
 
@@ -89,8 +83,6 @@ class ReplyTest extends TestCase
 
         // post reply
         $reponse = $this->actingAs($user)->post('/posts/1/replies', [
-            'user_id' => $user->id,
-            'post_id' => 1,
             'body' => $this->faker->paragraph(2)
         ]);
 
@@ -105,10 +97,13 @@ class ReplyTest extends TestCase
         $post = Post::factory()->create(['user_id' => $user->id]);
 
         // create reply
-        $reply = Reply::factory()->create([
-            'user_id' => $post->user_id,
-            'post_id' => $post->id,
+        $reply = Reply::factory()->make([
             'body' => $this->faker->paragraph(2)
+        ]);
+
+        // post reply
+        $this->actingAs($user)->post('/posts/'.$post->id.'/replies', [
+            'body' => $reply->body
         ]);
 
         $reponse = $this->actingAs($user)->get('/posts/' . $post->id);
@@ -120,9 +115,6 @@ class ReplyTest extends TestCase
     public function test_users_can_see_their_reply_in_following_user_tweet()
     {
         $user = User::factory()->create();
-
-        // create user posts
-        Post::factory()->create(['user_id' => $user->id]);
 
         // create following user
         $followingUser = User::factory()->create();
@@ -136,10 +128,11 @@ class ReplyTest extends TestCase
         $post = Post::factory()->create(['user_id' => $followingUser->id]);
 
         // create reply
-        $reply = Reply::factory()->create([
-            'user_id' => $post->user_id,
-            'post_id' => $post->id,
+        $reply = Reply::factory()->make([
             'body' => $this->faker->paragraph(2)
+        ]);
+        $this->actingAs($user)->post('/posts/'.$post->id.'/replies', [
+            'body' => $reply->body
         ]);
 
         $reponse = $this->actingAs($user)->get('/posts/' . $post->id);
@@ -155,21 +148,24 @@ class ReplyTest extends TestCase
         // create user posts
         $post = Post::factory()->create(['user_id' => $user->id]);
 
-        // create reply
-        $reply1 = Reply::factory()->create([
-            'user_id' => $post->user_id,
-            'post_id' => $post->id,
-            'body' => $this->faker->paragraph(2)
+        // first reply
+        $firstReply = Reply::factory()->make([
+            'body' => $this->faker->paragraph(2),
+        ]);
+        $this->actingAs($user)->post('/posts/'.$post->id.'/replies', [
+            'body' => $firstReply->body
         ]);
 
-        $reply2 = Reply::factory()->create([
-            'user_id' => $post->user_id,
-            'post_id' => $post->id,
-            'body' => $this->faker->paragraph(2)
+        // second reply
+        $secondReply = Reply::factory()->make([
+            'body' => $this->faker->paragraph(2),
+        ]);
+        $this->actingAs($user)->post('/posts/'.$post->id.'/replies', [
+            'body' => $secondReply->body
         ]);
 
         $reponse = $this->actingAs($user)->get('/posts/' . $post->id);
 
-        $reponse->assertSeeInOrder([$reply1->body, $reply2->body]);
+        $reponse->assertSeeInOrder([$firstReply->body, $secondReply->body]);
     }
 }

@@ -31,7 +31,7 @@ class Post extends Model
 
     public function reply()
     {
-        return $this->hasMany(Reply::class, 'post_id');
+        return $this->hasMany(Reply::class, 'post_id')->latest('published_at');
     }
 
     public function star()

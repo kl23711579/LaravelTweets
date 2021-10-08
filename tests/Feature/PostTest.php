@@ -16,47 +16,40 @@ class PostTest extends TestCase
 
     public function test_user_can_see_their_tweets()
     {
+        // create user
         $user = User::factory()->create();
-        Post::factory(5)->create(["user_id" => $user->id]);
-        $this->be($user);
+
+        // create tweet
+        $post = Post::factory()->make(["user_id" => $user->id]);
+
+        // post
+        $this->actingAs($user)->post('/posts', [
+            'body' => $post->body
+        ]);
+
         $response = $this->get('/posts');
-        $post = Post::first();
 
         $response->assertSee($post->body);
     }
 
     public function test_user_can_post_new_tweet()
     {
+        // create user
         $user = User::factory()->create();
-        $this->be($user);
 
-        $post = Post::factory()->make();
-        $response = $this->post('/posts', [
+        // create tweet
+        $post = Post::factory()->make(["user_id" => $user->id]);
+
+        // post tweet
+        $response = $this->actingAs($user)->post('/posts', [
             'body' => $post->body
         ]);
         $response->assertRedirect('/posts');
     }
 
-    public function test_user_can_see_their_new_tweet()
-    {
-        $user = User::factory()->create();
-        $this->be($user);
-
-        $post = Post::factory()->make();
-        $this->post('/posts', [
-            'body' => $post->body
-        ]);
-        $response = $this->get('/posts');
-        $response->assertSee($post->body);
-    }
-
     public function test_user_can_see_following_user_tweet()
     {
         $user = User::factory()->create();
-        $this->be($user);
-
-        // create user posts
-        Post::factory(3)->create(['user_id' => $user->id]);
 
         // create following user
         $followingUser = User::factory()->create();
@@ -67,58 +60,57 @@ class PostTest extends TestCase
         $uf->save();
 
         // create following user tweet
-        $posts = Post::factory(3)->create(['user_id' => $followingUser->id]);
+        $post = Post::factory()->make(['user_id' => $followingUser->id]);
+
+        // following user post tweet
+        $this->actingAs($followingUser)->post('/posts', [
+            'body' => $post->body
+        ]);
 
         $response = $this->get('/posts');
-        $response->assertSee($posts->first()->body);
+        $response->assertSee($post->body);
     }
 
     public function test_user_cannot_see_not_following_user_tweet()
     {
         $user = User::factory()->create();
-        $this->be($user);
-
-        // create user posts
-        Post::factory(3)->create(['user_id' => $user->id]);
 
         // create not following user
         $notFollowingUser = User::factory()->create();
 
         // create following user tweet
-        $posts = Post::factory(3)->create(['user_id' => $notFollowingUser->id]);
+        $post = Post::factory()->make(['user_id' => $notFollowingUser->id]);
 
-        $response = $this->get('/posts');
-        $response->assertDontSee($posts->first()->body);
+        // not following user post tweet
+        $this->actingAs($notFollowingUser)->post('/posts', [
+            'body' => $post->body
+        ]);
+
+        $response = $this->actingAs($user)->get('/posts');
+        $response->assertDontSee($post->body);
     }
 
     public function test_tweets_are_arranged_in_the_order_of_new_to_old()
     {
         $user = User::factory()->create();
 
-        // create following user
-        $followingUser = User::factory()->create();
-        // config relationship
-        $uf = new UserFollower;
-        $uf->user_id = $followingUser->id;
-        $uf->follower_id = $user->id;
-        $uf->save();
+        // create first tweet
+        $firstTweet = Post::factory()->make(['user_id' => $user->id]);
+        // post first tweet
+        $this->actingAs($user)->post('/posts', [
+            'body' => $firstTweet->body
+        ]);
 
-        // create tweets
-        $posts = Post::factory()
-                        ->count(6)
-                        ->state(new Sequence(
-                            ['user_id' => $user->id],
-                            ['user_id' => $followingUser->id],
-                        ))
-                        ->create()
-                        ->sortByDesc('published_at');
-
-        $firstOrderPost = $posts->shift();
-        $secondOrderPost = $posts->shift();
+        // create second tweet
+        $secondTweet = Post::factory()->make(['user_id' => $user->id]);
+        // post second tweet
+        $this->actingAs($user)->post('/posts', [
+            'body' => $secondTweet->body
+        ]);
 
         $response = $this->actingAs($user)->get('/posts');
 
-        $response->assertSeeInOrder([$firstOrderPost->body, $secondOrderPost->body]);
+        $response->assertSeeInOrder([$firstTweet->body, $secondTweet->body]);
     }
 
     public function test_user_tweet_thread_page_can_be_rendered()
@@ -126,11 +118,15 @@ class PostTest extends TestCase
         $user = User::factory()->create();
 
         // create user posts
-        $posts = Post::factory(3)->create(['user_id' => $user->id]);
+        $post = Post::factory()->make(['user_id' => $user->id]);
+        // post tweet
+        $this->actingAs($user)->post('/posts', [
+            'body' => $post->body
+        ]);
 
-        $response = $this->actingAs($user)->get('/posts/'.$posts->first()->id);
+        $response = $this->actingAs($user)->get('/posts/1');
 
-        $response->assertSeeInOrder([$posts->first()->body, 'Replys', 'Post']);
+        $response->assertSeeInOrder([$post->body, 'Replys', 'Post']);
     }
     // Post::factory(3)->make()->sortByDesc('published_at')
 
@@ -139,9 +135,13 @@ class PostTest extends TestCase
         $user = User::factory()->create();
 
         // create user posts
-        $posts = Post::factory(3)->create(['user_id' => $user->id]);
+        $post = Post::factory()->make(['user_id' => $user->id]);
+        // post tweet
+        $this->actingAs($user)->post('/posts', [
+            'body' => $post->body
+        ]);
 
-        $response = $this->actingAs($user)->get('/posts/'.$posts->first()->id);
+        $response = $this->actingAs($user)->get('/posts/1');
 
         $response->assertStatus(200);
     }
@@ -159,9 +159,14 @@ class PostTest extends TestCase
         $uf->save();
 
         // create following user tweet
-        $posts = Post::factory(3)->create(['user_id' => $followingUser->id]);
+        $tweet = Post::factory()->make(['user_id' => $followingUser->id]);
 
-        $response = $this->actingAs($user)->get('/posts/'.$posts->first()->id);
+        // post tweet
+        $this->actingAs($followingUser)->post('/posts', [
+            'body' => $tweet->body
+        ]);
+
+        $response = $this->actingAs($user)->get('/posts/1');
 
         $response->assertStatus(200);
     }
@@ -170,13 +175,19 @@ class PostTest extends TestCase
     {
         $user = User::factory()->create();
 
-        // create not following user
-        $notFollowingUser = User::factory()->create();
+        // create following user
+        $followingUser = User::factory()->create();
 
         // create following user tweet
-        $posts = Post::factory(3)->create(['user_id' => $notFollowingUser->id]);
+        $tweet = Post::factory()->make(['user_id' => $followingUser->id]);
 
-        $response = $this->actingAs($user)->get('/posts/'.$posts->first()->id);
+        // post tweet
+        $this->actingAs($followingUser)->post('/posts', [
+            'body' => $tweet->body
+        ]);
+
+        $response = $this->actingAs($user)->get('/posts/1');
+        ;
 
         $response->assertStatus(404);
     }

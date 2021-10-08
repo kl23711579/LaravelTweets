@@ -22,12 +22,16 @@ class ReplyFactory extends Factory
      */
     public function definition()
     {
-        $post = Post::factory()->create();
         return [
-            'user_id' => $post->user_id,
-            'post_id' => $post->id,
+            'user_id' => $this->faker->randomNumber(),
+            'post_id' => $this->faker->randomNumber(),
             'body' => $this->faker->paragraph(2),
-            'published_at' => $this->faker->dateTimeBetween($post->published_at, 'now')
+            'published_at' => $this->faker->dateTimeBetween()
         ];
     }
+
+//    public function withUserId($userId = 1)
+//    {
+//
+//    }
 }
