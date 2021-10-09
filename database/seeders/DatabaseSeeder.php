@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Post;
 use App\Models\Reply;
+use App\Models\Star;
 use App\Models\User;
 use App\Models\UserFollower;
 use Illuminate\Database\Seeder;
@@ -43,7 +44,11 @@ class DatabaseSeeder extends Seeder
 
         // each user have 5 post
         $users->map(function ($user) {
-            Post::factory(5)->create(['user_id' => $user->id]);
+            $posts = Post::factory(5)->create(['user_id' => $user->id]);
+            //each post create star
+            $posts->map(function($post) {
+                Star::create(['post_id' => $post->id]);
+            });
         });
 
         // create follower relationship
